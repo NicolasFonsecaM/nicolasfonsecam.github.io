@@ -16,7 +16,6 @@ JavaScript puro.
 -   **JavaScript** --- interatividade, efeitos de rolagem e animações
     dinâmicas\
 -   **Git/GitHub** --- controle de versão e hospedagem\
--   **Vercel / GitHub Pages** --- possível deploy (fácil integração)
 
 ------------------------------------------------------------------------
 
@@ -39,8 +38,6 @@ JavaScript puro.
 
   📬 **Contato**             Links diretos para e-mail, GitHub e
                              LinkedIn.
-
-  🦶 **Rodapé**              Direitos autorais e tecnologias utilizadas.
   -----------------------------------------------------------------------
 
 ------------------------------------------------------------------------
