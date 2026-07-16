@@ -10,9 +10,18 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Nicolas | Portfolio",
-  description: "Desenvolvedor focado em UI/UX de alta fidelidade e performance técnica.",
+  title: "Nicolas Fonseca | Portfólio",
+  description: "Desenvolvedor focado em construir aplicações completas e estudar segurança digital.",
+  openGraph: {
+    title: "Nicolas Fonseca | Portfólio",
+    description: "Desenvolvedor em constante evolução e estudante de segurança digital.",
+    url: "https://nicolasfonsecam.github.io",
+    siteName: "Nicolas Fonseca | Portfólio",
+    locale: "pt_BR",
+    type: "website",
+  },
 };
+
 
 export default function RootLayout({
   children,
