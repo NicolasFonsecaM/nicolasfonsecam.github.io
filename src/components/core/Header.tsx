@@ -16,23 +16,29 @@ export default function Header() {
           N<span className="text-[#00C853]">.</span>DEV
         </a>
 
-        {/* Navegação */}
-        <nav className="flex items-center gap-6">
+        {/* Navegação Atualizada */}
+        <nav className="flex items-center gap-5 md:gap-6">
+          <a
+            href="#about"
+            className="text-[11px] md:text-xs font-mono text-[#8E929F] hover:text-white transition-colors duration-200"
+          >
+            // sobre
+          </a>
+          <a
+            href="#education"
+            className="text-[11px] md:text-xs font-mono text-[#8E929F] hover:text-white transition-colors duration-200"
+          >
+            // formação
+          </a>
           <a
             href="#projects"
-            className="text-xs font-mono text-[#8E929F] hover:text-white transition-colors duration-200"
+            className="text-[11px] md:text-xs font-mono text-[#8E929F] hover:text-white transition-colors duration-200"
           >
             // projetos
           </a>
           <a
-            href="#lab"
-            className="text-xs font-mono text-[#8E929F] hover:text-white transition-colors duration-200"
-          >
-            // playground
-          </a>
-          <a
             href="#contact"
-            className="text-xs font-mono text-[#8E929F] hover:text-[#00C853] transition-colors duration-200"
+            className="text-[11px] md:text-xs font-mono text-[#8E929F] hover:text-[#00C853] transition-colors duration-200"
           >
             // contato
           </a>

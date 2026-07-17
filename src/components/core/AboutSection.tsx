@@ -27,7 +27,7 @@ export default function AboutSection() {
             Esse estalo me levou a iniciar a graduação em Cibersegurança. Buscando um ecossistema prático e presencial, ingressei também na FATEC-SJC, onde descobri uma forte aptidão pelo desenvolvimento de software.
           </p>
           <p>
-            Hoje, atuo na intersecção entre a lógica de programação e a construção de interfaces. Gosto do desafio de projetar telas limpas usando <span className="text-[#00C853] font-mono text-xs">TypeScript</span> e <span className="text-[#00C853] font-mono text-xs">React Native</span>, além de estruturar regras de negócio e integrações (como APIs e RevenueCat).
+            Hoje, atuo na intersecção entre a lógica de programação e a construção de interfaces. Gosto do desafio de projetar telas limpas usando <span className="text-[#00C853] font-mono text-xs">TypeScript</span> e <span className="text-[#00C853] font-mono text-xs">React Native</span>, além de estruturar regras de negócio e integrações.
           </p>
         </div>
 
