@@ -78,7 +78,7 @@ export default function Home() {
 
           <div className="flex flex-wrap items-center justify-center gap-4">
             <MagneticButton>
-              <a href="https://linkedin.com/in/seu-linkedin" target="_blank" rel="noreferrer" className="inline-flex h-12 items-center justify-center rounded-lg bg-[#12141C]/80 border border-[#1F222F] px-6 text-xs font-mono text-[#C2C5D1] hover:text-[#00C853]">
+              <a href="https://www.linkedin.com/in/nicolas-fonseca-60386130b/" target="_blank" rel="noreferrer" className="inline-flex h-12 items-center justify-center rounded-lg bg-[#12141C]/80 border border-[#1F222F] px-6 text-xs font-mono text-[#C2C5D1] hover:text-[#00C853]">
                 // linkedin
               </a>
             </MagneticButton>
