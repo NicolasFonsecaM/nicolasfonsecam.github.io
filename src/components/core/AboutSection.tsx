@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 export default function AboutSection() {
   const skills = [
     "HTML5 / CSS3", "JavaScript", "TypeScript", "React Native",
-    "Python", "Node.js", "Git / GitHub", "Redes (Conceitos)",
-    "Scrum Master", "Pensamento Analítico", "Trabalho em Equipe"
+    "Python", "Node.js", "Git / GitHub", "Redes (Conceitos)", "Linux (Básico)", 
+    "UI/UX Aesthetics", "Scrum Master", "Pensamento Analítico", "Trabalho em Equipe"
   ];
 
   return (
