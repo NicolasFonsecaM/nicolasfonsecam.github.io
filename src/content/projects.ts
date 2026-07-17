@@ -49,7 +49,8 @@ export const projects: Project[] = [
     description: "Assistente virtual inteligente no Telegram voltado à saúde pública, capaz de mapear coberturas vacinais, calendários oficiais e localizar UBSs em tempo real sem persistência de dados.",
     longDescription: "Desenvolvido em equipe (NexusDev) como Projeto Integrado (API) na FATEC São José dos Campos. O assistente consome dados processados do DATASUS e converte calendários oficiais do Ministério da Saúde de PDF para estruturas otimizadas em JSON. O bot responde em linguagem natural através da integração com LLMs locais via Ollama, processa dados geográficos (CEP e GPS) para sugerir Unidades Básicas de Saúde (UBSs) próximas e segue uma arquitetura estrita de segurança e privacidade: nenhuma informação do cidadão sofre persistência em bancos de dados. Como Scrum Master do projeto, liderei as cerimônias ágeis, mapeamento de tarefas no Jira e a consolidação das entregas do time.",
     techStack: ["Python", "Telegram API", "Ollama (AI)", "JSON Data", "Jira / Scrum"],
-    githubUrl: "https://github.com/nexusdevapi/VacinaBrasil-Bot"
+    githubUrl: "https://github.com/nexusdevapi/VacinaBrasil-Bot",
+    imageUrl: "vacina_logo.jpg"
   },
 ];
 
