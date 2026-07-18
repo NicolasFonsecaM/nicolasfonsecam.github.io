@@ -14,7 +14,7 @@ export interface Project {
   techStack: string[];
   githubUrl?: string;
   liveUrl?: string;
-  imageUrl?: string;
+  imageUrl?: string | string[];
 }
 
 export const educationList: Education[] = [
@@ -36,11 +36,16 @@ export const projects: Project[] = [
   {
     id: "finance-lab",
     title: "Finance Lab",
-    category: "Mobile App",
-    description: "Aplicativo móvel de gestão financeira desenvolvido com React Native e integrado com a Pluggy API.",
-    longDescription: "O Finance Lab foi arquitetado com foco em alta fidelidade visual, controle rígido de estados e tratamento seguro de dados financeiros. Integra de forma transparente credenciais via Pluggy API e gerencia fluxos internos complexos de navegação e performance no ecossistema mobile.",
-    techStack: ["React Native", "TypeScript", "Pluggy API", "Tailwind CSS"],
-    githubUrl: "#"
+    category: "Mobile App / Full Stack Backend",
+    description: "Aplicativo móvel multiplataforma focado em gestão financeira e análise de ativos com Expo/React Native, integrado a múltiplos microsserviços em Python e automação de e-mails.",
+    longDescription: "Atuei ativamente no design e na arquitetura do ecossistema. Desenvolvi todo o protótipo de alta fidelidade das interfaces no Figma e liderei a implementação do Front-End utilizando TypeScript e Expo, refinando componentes estáticos e micro-interações de tela. No gerenciamento de negócio e monetização, integrei o ecossistema do RevenueCat para controle estrito das assinaturas e travas dos planos Silver (gratuito) e Gold. No Back-End (Python/FastAPI), implementei o microsserviço de comunicação transacional integrado à API do Resend, estruturando os gatilhos automatizados em HTML para fluxos de boas-vindas, recuperação de credenciais, exclusão de contas e suporte interno. Além disso, desenvolvi a lógica de segurança (blindagem no back-end) para controle de consumo de dados da IA (Gemini), mitigando requisições duplicadas e protegendo o barramento contra desperdício acidental de tokens dos usuários.",
+    techStack: ["React Native", "TypeScript / Expo", "FastAPI (Python)", "RevenueCat", "Resend API", "Figma"],
+    imageUrl: [
+      "/images/finance-lab/tela1.jpg", // Capa / Apresentação
+      "/images/finance-lab/tela2.jpg", // Dashboard Principal
+      "/images/finance-lab/tela3.jpg", // Centro de Inteligência (IA)
+      "/images/finance-lab/tela4.jpg"  // Atividades
+    ]
   },
   {
     id: "vacinabrasil-bot",

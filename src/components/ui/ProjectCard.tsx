@@ -24,7 +24,9 @@ export default function ProjectCard({ project, onClick }: ProjectCardProps) {
           initial={{ opacity: 0, scale: 1 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
           className="absolute inset-0 z-0 bg-cover bg-center pointer-events-none filter grayscale"
-          style={{ backgroundImage: `url(${project.imageUrl})` }}
+          style={{ 
+            backgroundImage: `url(${Array.isArray(project.imageUrl) ? project.imageUrl[0] : project.imageUrl})` 
+          }}
         />
       )}
 

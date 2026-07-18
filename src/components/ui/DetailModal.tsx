@@ -12,8 +12,9 @@ interface DetailModalProps {
 
 export default function DetailModal({ item, onClose }: DetailModalProps) {
   const [animationData, setAnimationData] = useState<any>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Carrega o JSON do Lottie dentro do modal se for o projeto da logo animada
+  // Carrega o JSON do Lottie se for o projeto da logo animada
   useEffect(() => {
     if (item?.id === "splash-logo-lottie") {
       fetch("/splash-logo.json")
@@ -21,17 +22,34 @@ export default function DetailModal({ item, onClose }: DetailModalProps) {
         .then((data) => setAnimationData(data))
         .catch((err) => console.error("Erro ao ler JSON no modal:", err));
     }
+    // Reseta o índice da imagem ao abrir um novo projeto
+    setCurrentImageIndex(0);
   }, [item?.id]);
 
   if (!item) return null;
 
-  // Verifica se o item possui algum elemento visual para a lateral esquerda
-  const hasSidebar = item.imageUrl || item.id === "splash-logo-lottie";
+  // Normaliza as imagens para um array de strings
+  const images = Array.isArray(item.imageUrl) 
+    ? item.imageUrl 
+    : item.imageUrl 
+      ? [item.imageUrl] 
+      : [];
+
+  const hasSidebar = images.length > 0 || item.id === "splash-logo-lottie";
+
+  const nextImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevImage = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        {/* Backdrop escuro */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -40,7 +58,6 @@ export default function DetailModal({ item, onClose }: DetailModalProps) {
           className="absolute inset-0 bg-[#0B0C10]/80 backdrop-blur-md"
         />
 
-        {/* Janela do Modal */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -56,30 +73,63 @@ export default function DetailModal({ item, onClose }: DetailModalProps) {
             // fechar
           </button>
 
-          {/* Lateral Esquerda: Imagem ou Animação Lottie */}
+          {/* Lateral Esquerda: Imagem, Carrossel ou Lottie */}
           {hasSidebar && (
-            <div className="w-full md:w-1/2 h-48 md:h-auto bg-[#0B0C10] relative flex-shrink-0 border-b md:border-b-0 md:border-r border-[#1F222F] flex items-center justify-center p-8 overflow-hidden">
+            <div className="w-full md:w-1/2 h-64 md:h-auto bg-[#0B0C10] relative flex-shrink-0 border-b md:border-b-0 md:border-r border-[#1F222F] flex items-center justify-center overflow-hidden">
               
-              {/* Condicional 1: Se for o Lottie da Splash Logo */}
+              {/* Caso 1: Se for o Lottie da Splash Logo */}
               {item.id === "splash-logo-lottie" ? (
                 <div className="w-48 h-48 flex items-center justify-center z-10">
                   {animationData ? (
-                    <Lottie 
-                      animationData={animationData} 
-                      loop={true} 
-                      autoplay={true} // Roda direto no modal para dar o destaque premium
-                    />
+                    <Lottie animationData={animationData} loop={true} autoplay={true} />
                   ) : (
                     <div className="w-6 h-6 rounded-full border-2 border-[#1F222F] border-t-[#00C853] animate-spin" />
                   )}
                 </div>
               ) : (
-                /* Condicional 2: Se for uma imagem estática comum */
-                <img 
-                  src={item.imageUrl} 
-                  alt={item.title} 
-                  className="absolute inset-0 w-full h-full object-cover object-center opacity-85"
-                />
+                /* Caso 2: Se for Imagem Única ou Carrossel */
+                <div className="w-full h-full relative flex items-center justify-center p-4">
+                  <AnimatePresence mode="wait">
+                    <motion.img 
+                      key={currentImageIndex}
+                      src={images[currentImageIndex]} 
+                      alt={`${item.title} - ${currentImageIndex}`} 
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 0.9, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.2 }}
+                      className="max-w-full max-h-full object-contain object-center rounded-lg shadow-lg"
+                    />
+                  </AnimatePresence>
+
+                  {/* Controles do Carrossel (Apenas se houver mais de uma imagem) */}
+                  {images.length > 1 && (
+                    <>
+                      <button 
+                        onClick={prevImage}
+                        className="absolute left-4 bg-[#12141C]/70 border border-[#1F222F] text-white hover:text-[#00C853] w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs transition-colors"
+                      >
+                        &lt;
+                      </button>
+                      <button 
+                        onClick={nextImage}
+                        className="absolute right-4 bg-[#12141C]/70 border border-[#1F222F] text-white hover:text-[#00C853] w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs transition-colors"
+                      >
+                        &gt;
+                      </button>
+
+                      {/* Indicador de Bolinhas Inferiores */}
+                      <div className="absolute bottom-4 flex gap-1.5 z-20">
+                        {images.map((_, idx) => (
+                          <div 
+                            key={idx} 
+                            className={`w-1.5 h-1.5 rounded-full transition-all duration-200 ${idx === currentImageIndex ? "bg-[#00C853] w-3" : "bg-[#1F222F]"}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               )}
 
               <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-transparent to-[#12141C]/40 pointer-events-none" />
@@ -96,6 +146,13 @@ export default function DetailModal({ item, onClose }: DetailModalProps) {
             <p className="text-[#8E929F] text-sm md:text-base leading-relaxed font-light">
               {item.longDescription || item.description}
             </p>
+
+            {/* Aviso sutil de escopo para o Finance Lab */}
+            {item.id === "finance-lab" && (
+              <p className="text-[11px] font-mono text-[#8E929F] border-l border-[#1F222F] pl-3 italic">
+                * Nota: O carrossel exibe as principais interfaces desenvolvidas; o ecossistema engloba fluxos adicionais e regras internas complexas.
+              </p>
+            )}
 
             <div className="space-y-2">
               <h4 className="text-xs font-mono text-[#C2C5D1] uppercase tracking-wider">// Tecnologias</h4>
