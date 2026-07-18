@@ -19,10 +19,15 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
 
   if (!project) return null;
 
-  // Extração unificada e tipada com asserção estrita para eliminar o erro do TypeScript
-  const images = (project.imageUrl && project.imageUrl.length > 0
-    ? project.imageUrl
-    : ((project as any).image ? [(project as any).image] : [])) as string[];
+  // 1. Normalização inteligente e segura do array de mídias para evitar crashes ("This page couldn't load")
+  let images: string[] = [];
+  if (project.imageUrl && Array.isArray(project.imageUrl) && project.imageUrl.length > 0) {
+    images = project.imageUrl;
+  } else if ((project as any).image) {
+    images = [(project as any).image];
+  } else if ((project as any).imageUrl && typeof (project as any).imageUrl === 'string') {
+    images = [(project as any).imageUrl];
+  }
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -38,26 +43,30 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
     }
   };
 
+  // 2. Definição do comportamento visual baseado na categoria do projeto
+  const isMobile = project.category?.toLowerCase().includes('mobile') || project.category?.toLowerCase().includes('app');
+  const isWebApplication = project.category?.toLowerCase().includes('web') || project.category?.toLowerCase().includes('full-stack');
+  const isAnimationOrVector = project.category?.toLowerCase().includes('animação') || project.category?.toLowerCase().includes('vetor');
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
           {/* Background overlay click handler */}
           <div className="absolute inset-0" onClick={onClose} />
 
           {/* Modal Card Container */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="relative w-full max-w-5xl bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl z-10 flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh]"
+            exit={{ opacity: 0, scale: 0.98 }}
+            className="relative w-full max-w-5xl bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl z-10 flex flex-col md:flex-row max-h-[92vh] md:max-h-[85vh]"
           >
             {/* ==================================================== */}
-            {/* LADO ESQUERDO: CONTAINER DE MÍDIA (RESPONSIVO DINÂMICO) */}
+            {/* LADO ESQUERDO: RECIPIENTE DE MÍDIA CUSTOMIZADO      */}
             {/* ==================================================== */}
-            <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-zinc-950/40 p-4 relative group border-b border-zinc-800 md:border-b-0 md:border-r h-[35vh] md:h-auto min-h-[300px]">
+            <div className={`w-full md:w-1/2 flex flex-col justify-center items-center bg-zinc-950/50 p-4 relative group border-b border-zinc-800 md:border-b-0 md:border-r min-h-[320px] ${isWebApplication ? 'md:p-2' : 'p-6'}`}>
               
-              {/* Container flexível que se molda à proporção nativa da imagem */}
               <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl">
                 
                 {/* Botão de navegação anterior */}
@@ -72,13 +81,47 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
                   </button>
                 )}
 
-                {/* Imagem / GIF com comportamento responsivo puro */}
+                {/* RENDERIZAÇÃO ISOLADA POR CATEGORIA */}
                 {images.length > 0 && images[currentImageIndex] ? (
-                  <img
-                    src={images[currentImageIndex]}
-                    alt={`${project.title} preview`}
-                    className="max-w-full max-h-full w-auto h-auto object-contain rounded-lg shadow-inner transition-transform duration-200"
-                  />
+                  <>
+                    {isMobile && (
+                      /* Layout Finance Lab & NexusDev Mobile: Otimizado para telas verticais estreitas e altas */
+                      <img
+                        src={images[currentImageIndex]}
+                        alt="Mobile Preview"
+                        className="max-h-[50vh] md:max-h-[70vh] w-auto h-full object-contain rounded-xl shadow-2xl"
+                      />
+                    )}
+
+                    {isWebApplication && (
+                      /* Layout CoreConnect: Otimizado para Desktop deitado, maximizando largura para melhor leitura do print */
+                      <img
+                        src={images[currentImageIndex]}
+                        alt="Web Preview"
+                        className="w-full h-auto max-h-[45vh] md:max-h-[65vh] object-contain rounded-lg shadow-lg border border-zinc-800"
+                      />
+                    )}
+
+                    {isAnimationOrVector && (
+                      /* Layout Logo Splash & Vetores: Enquadramento centralizado simétrico e limpo */
+                      <div className="p-8 bg-zinc-900/40 rounded-xl border border-zinc-800/50 flex items-center justify-center w-48 h-48 md:w-64 md:h-64">
+                        <img
+                          src={images[currentImageIndex]}
+                          alt="Vector Preview"
+                          className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(0,200,83,0.2)]"
+                        />
+                      </div>
+                    )}
+
+                    {!isMobile && !isWebApplication && !isAnimationOrVector && (
+                      /* Fallback padrão seguro */
+                      <img
+                        src={images[currentImageIndex]}
+                        alt="Project Preview"
+                        className="max-w-full max-h-full object-contain rounded-lg"
+                      />
+                    )}
+                  </>
                 ) : (
                   <div className="text-zinc-600 font-mono text-xs select-none">// Nenhuma pré-visualização disponível</div>
                 )}
@@ -99,7 +142,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
               {/* Indicadores de paginação (Dots) */}
               {images.length > 1 && (
                 <div className="flex gap-1.5 mt-3 absolute bottom-3">
-                  {images.map((image, idx) => (
+                  {images.map((imagePath, idx) => (
                     <button
                       key={idx}
                       onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
@@ -111,7 +154,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
             </div>
 
             {/* ==================================================== */}
-            {/* LADO DIREITO: INFORMAÇÕES TÉCNICAS DO PROJETO */}
+            {/* LADO DIREITO: INFORMAÇÕES TÉCNICAS DO PROJETO        */}
             {/* ==================================================== */}
             <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between overflow-y-auto max-h-[50vh] md:max-h-none bg-zinc-900">
               <div>
