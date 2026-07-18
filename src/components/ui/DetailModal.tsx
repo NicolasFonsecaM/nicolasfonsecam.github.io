@@ -19,8 +19,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
 
   if (!project) return null;
 
-  // Garante de forma segura que sempre teremos um array válido para varrer
-  const images = project.imageUrl || (project as any).image ? [(project as any).image] : [];
+  // Extração unificada e tipada com asserção estrita para eliminar o erro do TypeScript
+  const images = (project.imageUrl && project.imageUrl.length > 0
+    ? project.imageUrl
+    : ((project as any).image ? [(project as any).image] : [])) as string[];
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -97,7 +99,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
               {/* Indicadores de paginação (Dots) */}
               {images.length > 1 && (
                 <div className="flex gap-1.5 mt-3 absolute bottom-3">
-                  {images.map((_, idx) => (
+                  {images.map((image, idx) => (
                     <button
                       key={idx}
                       onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
