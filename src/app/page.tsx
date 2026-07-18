@@ -8,7 +8,7 @@ import AboutSection from "@/components/core/AboutSection";
 import EducationSection from "@/components/core/EducationSection";
 import ProjectCard from "@/components/ui/ProjectCard";
 import ExperimentCard from "@/components/ui/ExperimentCard";
-import DetailModal from "@/components/ui/DetailModal";
+import { ProjectModal } from "@/components/ui/DetailModal";
 import MagneticButton from "@/components/interactive/MagneticButton";
 import { projects, experiments, Project } from "@/content/projects";
 
@@ -54,7 +54,7 @@ export default function Home() {
               <ExperimentCard 
                 key={exp.id} 
                 item={exp} 
-                onClick={() => setSelectedItem(exp)}
+                onClick={() => setSelectedItem(exp as unknown as Project)}
               />
             ))}
           </div>
@@ -91,8 +91,8 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Renderizador do Modal Global */}
-      <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      {/* Renderizador do Modal Global com Typecast ajustado para aceitar Project ou Experiment */}
+      <ProjectModal project={selectedItem as any} isOpen={selectedItem !== null} onClose={() => setSelectedItem(null)} />
 
       <footer className="relative z-10 py-12 text-center border-t border-[#1F222F]/30 bg-[#0B0C10]">
         <p className="text-xs font-mono text-[#8E929F]">

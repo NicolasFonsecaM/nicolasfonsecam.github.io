@@ -1,15 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Project } from "@/content/projects"; // <-- Adicione esta importação aqui
 
-interface Project {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  longDescription: string;
-  techStack: string[];
-  imageUrl: string[];
-}
+// REMOVA ou comente este bloco inteiro debaixo que estava duplicado:
+// interface Project {
+//   id: string;
+//   title: string;
+//   ...
+// }
 
 interface ProjectModalProps {
   project: Project | null;
@@ -18,7 +16,15 @@ interface ProjectModalProps {
 }
 
 export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose }) => {
+// ... resto do código continua exatamente igual
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Reseta o índice da imagem toda vez que um projeto diferente for aberto
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentImageIndex(0);
+    }
+  }, [project, isOpen]);
 
   if (!project) return null;
 
@@ -35,11 +41,11 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
           {/* Background overlay click handler */}
           <div className="absolute inset-0" onClick={onClose} />
 
-          {/* Modal Card Container t*/}
+          {/* Modal Card Container */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -49,16 +55,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
             {/* ==================================================== */}
             {/* LADO ESQUERDO: CONTAINER DE MÍDIA (RESPONSIVO & GRANDE) */}
             {/* ==================================================== */}
-            <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-zinc-950/50 p-6 relative group border-b border-zinc-800 md:border-b-0 md:border-r">
+            <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-zinc-950/60 p-6 relative group border-b border-zinc-800 md:border-b-0 md:border-r">
               
-              {/* Wrapper com proporção 16:9 forçada para esticar as imagens */}
-              <div className="relative w-full aspect-video flex items-center justify-center overflow-hidden rounded-xl bg-zinc-900/30">
+              {/* Wrapper com proporção 16:9 dinâmica e tamanho expandido */}
+              <div className="relative w-full aspect-video flex items-center justify-center overflow-hidden rounded-xl bg-zinc-900/40">
                 
                 {/* Botão de navegação anterior */}
-                {project.imageUrl.length > 1 && (
+                {project.imageUrl && project.imageUrl.length > 1 && (
                   <button
                     onClick={prevImage}
-                    className="absolute left-3 z-20 p-2 bg-zinc-900/80 hover:bg-zinc-800 text-white rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                    className="absolute left-3 z-20 p-2 bg-zinc-900/90 hover:bg-zinc-800 text-white rounded-full transition-colors opacity-0 group-hover:opacity-100 border border-zinc-800"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -67,17 +73,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
                 )}
 
                 {/* Imagem / GIF principal ocupando 100% da área útil disponível */}
-                <img
-                  src={project.imageUrl[currentImageIndex]}
-                  alt={`${project.title} screenshot ${currentImageIndex + 1}`}
-                  className="w-full h-full object-contain transition-all duration-300 select-none"
-                />
+                {project.imageUrl && project.imageUrl.length > 0 ? (
+                  <img
+                    src={project.imageUrl[currentImageIndex]}
+                    alt={`${project.title} screenshot ${currentImageIndex + 1}`}
+                    className="w-full h-full object-contain transition-all duration-300 select-none"
+                  />
+                ) : (
+                  <div className="text-zinc-600 font-mono text-xs">// Nenhuma imagem disponível</div>
+                )}
 
                 {/* Botão de próxima navegação */}
-                {project.imageUrl.length > 1 && (
+                {project.imageUrl && project.imageUrl.length > 1 && (
                   <button
                     onClick={nextImage}
-                    className="absolute right-3 z-20 p-2 bg-zinc-900/80 hover:bg-zinc-800 text-white rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                    className="absolute right-3 z-20 p-2 bg-zinc-900/90 hover:bg-zinc-800 text-white rounded-full transition-colors opacity-0 group-hover:opacity-100 border border-zinc-800"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -87,7 +97,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
               </div>
 
               {/* Indicadores de paginação de imagem (Dots) */}
-              {project.imageUrl.length > 1 && (
+              {project.imageUrl && project.imageUrl.length > 1 && (
                 <div className="flex gap-2 mt-4">
                   {project.imageUrl.map((_, idx) => (
                     <button
@@ -103,7 +113,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
             {/* ==================================================== */}
             {/* LADO DIREITO: INFORMAÇÕES TÉCNICAS DO PROJETO */}
             {/* ==================================================== */}
-            <div className="w-full md:w-1/2 p-8 flex flex-col justify-between">
+            <div className="w-full md:w-1/2 p-8 flex flex-col justify-between bg-zinc-900">
               <div>
                 {/* Cabeçalho superior */}
                 <div className="flex justify-between items-start mb-4">
@@ -133,7 +143,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
               <div>
                 <h4 className="text-xs font-mono text-zinc-500 uppercase tracking-widest mb-3">// Tecnologias</h4>
                 <div className="flex flex-wrap gap-2">
-                  {project.techStack.map((tech, index) => (
+                  {project.techStack && project.techStack.map((tech, index) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-zinc-950 text-zinc-300 border border-zinc-800 rounded-md text-xs font-mono"
