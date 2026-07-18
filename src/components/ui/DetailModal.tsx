@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Project } from "@/content/projects"; // <-- Adicione esta importação aqui
 
-// REMOVA ou comente este bloco inteiro debaixo que estava duplicado:
-// interface Project {
-//   id: string;
-//   title: string;
-//   ...
-// }
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  longDescription: string;
+  techStack: string[];
+  imageUrl: string[];
+}
 
 interface ProjectModalProps {
   project: Project | null;
@@ -16,7 +18,6 @@ interface ProjectModalProps {
 }
 
 export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose }) => {
-// ... resto do código continua exatamente igual
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Reseta o índice da imagem toda vez que um projeto diferente for aberto
@@ -27,15 +28,20 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
   }, [project, isOpen]);
 
   if (!project) return null;
-
-  const nextImage = (e: React.MouseEvent) => {
+const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentImageIndex((prev) => (prev + 1) % project.imageUrl.length);
+    const totalImages = project.imageUrl?.length || 0;
+    if (totalImages > 0) {
+      setCurrentImageIndex((prev) => (prev + 1) % totalImages);
+    }
   };
 
   const prevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentImageIndex((prev) => (prev - 1 + project.imageUrl.length) % project.imageUrl.length);
+    const totalImages = project.imageUrl?.length || 0;
+    if (totalImages > 0) {
+      setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
+    }
   };
 
   return (
