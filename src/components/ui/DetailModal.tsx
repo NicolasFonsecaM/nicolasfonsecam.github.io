@@ -39,7 +39,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
           {/* Background overlay click handler */}
           <div className="absolute inset-0" onClick={onClose} />
 
-          {/* Modal Card Container */}
+          {/* Modal Card Container t*/}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
