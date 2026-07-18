@@ -1,202 +1,153 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+'use client';
+
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import Lottie from "lottie-react";
 import { Project } from "@/content/projects";
 
-interface ProjectModalProps {
-  project: Project | null;
-  isOpen: boolean;
+interface DetailModalProps {
+  item: Project | null;
   onClose: () => void;
 }
 
-export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onClose }) => {
+export default function DetailModal({ item, onClose }: DetailModalProps) {
+  const [animationData, setAnimationData] = useState<any>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  // Carrega o JSON do Lottie se for o projeto da logo animada
   useEffect(() => {
-    if (isOpen) {
-      setCurrentImageIndex(0);
+    if (item?.id === "splash-logo-lottie") {
+      fetch("/splash-logo.json")
+        .then((res) => res.json())
+        .then((data) => setAnimationData(data))
+        .catch((err) => console.error("Erro ao ler JSON no modal:", err));
     }
-  }, [project, isOpen]);
+    // Reseta o índice ao abrir um novo item
+    setCurrentImageIndex(0);
+  }, [item?.id]);
 
-  if (!project) return null;
+  if (!item) return null;
 
-  // 1. Normalização inteligente e segura do array de mídias para evitar crashes ("This page couldn't load")
-  let images: string[] = [];
-  if (project.imageUrl && Array.isArray(project.imageUrl) && project.imageUrl.length > 0) {
-    images = project.imageUrl;
-  } else if ((project as any).image) {
-    images = [(project as any).image];
-  } else if ((project as any).imageUrl && typeof (project as any).imageUrl === 'string') {
-    images = [(project as any).imageUrl];
-  }
+  // Normaliza imagens para array de strings
+  const images = Array.isArray(item.imageUrl) ? item.imageUrl : item.imageUrl ? [item.imageUrl] : [];
+  const hasSidebar = images.length > 0 || item.id === "splash-logo-lottie";
 
   const nextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (images.length > 1) {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
   };
 
   const prevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (images.length > 1) {
-      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-    }
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
-
-  // 2. Definição do comportamento visual baseado na categoria do projeto
-  const isMobile = project.category?.toLowerCase().includes('mobile') || project.category?.toLowerCase().includes('app');
-  const isWebApplication = project.category?.toLowerCase().includes('web') || project.category?.toLowerCase().includes('full-stack');
-  const isAnimationOrVector = project.category?.toLowerCase().includes('animação') || project.category?.toLowerCase().includes('vetor');
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
-          {/* Background overlay click handler */}
-          <div className="absolute inset-0" onClick={onClose} />
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={onClose}
+          className="absolute inset-0 bg-[#0B0C10]/80 backdrop-blur-md"
+        />
 
-          {/* Modal Card Container */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            className="relative w-full max-w-5xl bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl z-10 flex flex-col md:flex-row max-h-[92vh] md:max-h-[85vh]"
-          >
-            {/* ==================================================== */}
-            {/* LADO ESQUERDO: RECIPIENTE DE MÍDIA CUSTOMIZADO      */}
-            {/* ==================================================== */}
-            <div className={`w-full md:w-1/2 flex flex-col justify-center items-center bg-zinc-950/50 p-4 relative group border-b border-zinc-800 md:border-b-0 md:border-r min-h-[320px] ${isWebApplication ? 'md:p-2' : 'p-6'}`}>
-              
-              <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-xl">
-                
-                {/* Botão de navegação anterior */}
-                {images.length > 1 && (
-                  <button
-                    onClick={prevImage}
-                    className="absolute left-3 z-20 p-2 bg-zinc-900/90 hover:bg-zinc-800 text-white rounded-full transition-colors border border-zinc-800 shadow-md"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
-                  </button>
-                )}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.95, y: 10 }}
+          transition={{ duration: 0.2 }}
+          className="relative w-full max-w-4xl bg-[#12141C] border border-[#1F222F] rounded-2xl shadow-2xl z-10 flex flex-col md:flex-row overflow-hidden max-h-[85vh]"
+        >
+          {/* Botão Fechar */}
+          <button onClick={onClose} className="absolute top-4 right-4 text-[#8E929F] hover:text-white font-mono text-sm z-30 bg-[#12141C]/80 px-2 py-1 rounded">
+            // fechar
+          </button>
 
-                {/* RENDERIZAÇÃO ISOLADA POR CATEGORIA */}
-                {images.length > 0 && images[currentImageIndex] ? (
-                  <>
-                    {isMobile && (
-                      /* Layout Finance Lab & NexusDev Mobile: Otimizado para telas verticais estreitas e altas */
-                      <img
-                        src={images[currentImageIndex]}
-                        alt="Mobile Preview"
-                        className="max-h-[50vh] md:max-h-[70vh] w-auto h-full object-contain rounded-xl shadow-2xl"
-                      />
-                    )}
-
-                    {isWebApplication && (
-                      /* Layout CoreConnect: Otimizado para Desktop deitado, maximizando largura para melhor leitura do print */
-                      <img
-                        src={images[currentImageIndex]}
-                        alt="Web Preview"
-                        className="w-full h-auto max-h-[45vh] md:max-h-[65vh] object-contain rounded-lg shadow-lg border border-zinc-800"
-                      />
-                    )}
-
-                    {isAnimationOrVector && (
-                      /* Layout Logo Splash & Vetores: Enquadramento centralizado simétrico e limpo */
-                      <div className="p-8 bg-zinc-900/40 rounded-xl border border-zinc-800/50 flex items-center justify-center w-48 h-48 md:w-64 md:h-64">
-                        <img
-                          src={images[currentImageIndex]}
-                          alt="Vector Preview"
-                          className="w-full h-full object-contain filter drop-shadow-[0_0_15px_rgba(0,200,83,0.2)]"
-                        />
-                      </div>
-                    )}
-
-                    {!isMobile && !isWebApplication && !isAnimationOrVector && (
-                      /* Fallback padrão seguro */
-                      <img
-                        src={images[currentImageIndex]}
-                        alt="Project Preview"
-                        className="max-w-full max-h-full object-contain rounded-lg"
-                      />
-                    )}
-                  </>
-                ) : (
-                  <div className="text-zinc-600 font-mono text-xs select-none">// Nenhuma pré-visualização disponível</div>
-                )}
-
-                {/* Botão de próxima navegação */}
-                {images.length > 1 && (
-                  <button
-                    onClick={nextImage}
-                    className="absolute right-3 z-20 p-2 bg-zinc-900/90 hover:bg-zinc-800 text-white rounded-full transition-colors border border-zinc-800 shadow-md"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-
-              {/* Indicadores de paginação (Dots) */}
-              {images.length > 1 && (
-                <div className="flex gap-1.5 mt-3 absolute bottom-3">
-                  {images.map((imagePath, idx) => (
-                    <button
-                      key={idx}
-                      onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
-                      className={`w-1.5 h-1.5 rounded-full transition-all ${idx === currentImageIndex ? 'bg-[#00C853] w-3' : 'bg-zinc-700'}`}
+          {/* Lateral Esquerda: Mídia */}
+          {hasSidebar && (
+            <div className="w-full md:w-1/2 flex-1 bg-[#0B0C10] relative flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r border-[#1F222F]">
+              {item.id === "splash-logo-lottie" ? (
+                <div className="w-full h-full flex items-center justify-center p-8">
+                  {animationData ? (
+                    <Lottie animationData={animationData} loop={true} autoplay={true} />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full border-2 border-[#1F222F] border-t-[#00C853] animate-spin" />
+                  )}
+                </div>
+              ) : (
+                <div className="w-full h-full relative flex items-center justify-center">
+                  <AnimatePresence mode="wait">
+                    <motion.img 
+                      key={currentImageIndex}
+                      src={images[currentImageIndex]} 
+                      alt={`${item.title} - ${currentImageIndex}`} 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full h-full object-contain p-2"
                     />
-                  ))}
+                  </AnimatePresence>
+
+                  {images.length > 1 && (
+                    <>
+                      <button onClick={prevImage} className="absolute left-4 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm hover:bg-black/70 transition-all z-20">
+                        &lt;
+                      </button>
+                      <button onClick={nextImage} className="absolute right-4 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-sm hover:bg-black/70 transition-all z-20">
+                        &gt;
+                      </button>
+                      <div className="absolute bottom-6 flex gap-2 z-20">
+                        {images.map((_, idx) => (
+                          <div key={idx} className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? "bg-[#00C853] w-6" : "bg-[#1F222F] w-1.5"}`} />
+                        ))}
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
             </div>
+          )}
 
-            {/* ==================================================== */}
-            {/* LADO DIREITO: INFORMAÇÕES TÉCNICAS DO PROJETO        */}
-            {/* ==================================================== */}
-            <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-between overflow-y-auto max-h-[50vh] md:max-h-none bg-zinc-900">
-              <div>
-                <div className="flex justify-between items-start mb-3">
-                  <span className="text-[10px] md:text-xs font-semibold tracking-wider uppercase text-[#00C853]">
-                    {project.category}
-                  </span>
-                  <button
-                    onClick={onClose}
-                    className="text-zinc-500 hover:text-white font-mono text-xs transition-colors"
-                  >
-                    // fechar
-                  </button>
-                </div>
-
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 select-none">
-                  {project.title}
-                </h2>
-
-                <p className="text-zinc-400 text-xs md:text-sm leading-relaxed mb-6 whitespace-pre-line text-justify font-normal">
-                  {project.longDescription || project.description}
-                </p>
-              </div>
-
-              <div>
-                <h4 className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest mb-2.5">// Tecnologias</h4>
-                <div className="flex flex-wrap gap-1.5">
-                  {project.techStack && project.techStack.map((tech, index) => (
-                    <span
-                      key={index}
-                      className="px-2.5 py-0.5 bg-zinc-950 text-zinc-300 border border-zinc-800 rounded md:text-xs text-[10px] font-mono"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
+          {/* Lateral Direita: Informações */}
+          <div className="flex-1 p-6 md:p-8 space-y-6 overflow-y-auto">
+            <div className="space-y-2">
+              <span className="text-[#00C853] font-mono text-[10px] uppercase tracking-widest">// {item.category}</span>
+              <h3 className="text-2xl font-bold text-white tracking-tight">{item.title}</h3>
             </div>
-          </motion.div>
-        </div>
-      )}
+
+            <p className="text-[#8E929F] text-sm md:text-base leading-relaxed font-light">{item.longDescription || item.description}</p>
+
+            {item.id === "finance-lab" && (
+              <p className="text-[11px] font-mono text-[#8E929F] border-l border-[#1F222F] pl-3 italic">
+                * Nota: O carrossel exibe as principais interfaces desenvolvidas; o ecossistema engloba fluxos adicionais e regras internas complexas.
+              </p>
+            )}
+
+            <div className="space-y-2">
+              <h4 className="text-xs font-mono text-[#C2C5D1] uppercase tracking-wider">// Tecnologias</h4>
+              <div className="flex flex-wrap gap-2">
+                {item.techStack.map((tech, i) => (
+                  <span key={i} className="text-[11px] font-mono px-2.5 py-1 rounded bg-[#0B0C10] border border-[#1F222F] text-[#8E929F]">{tech}</span>
+                ))}
+              </div>
+            </div>
+
+            {(item.githubUrl || item.liveUrl) && (
+              <div className="flex gap-4 pt-2 border-t border-[#1F222F]/40">
+                {item.githubUrl && item.githubUrl !== "#" && (
+                  <a href={item.githubUrl} target="_blank" rel="noreferrer" className="text-xs font-mono text-[#00C853] hover:underline">[ Ver Código ]</a>
+                )}
+                {item.liveUrl && item.liveUrl !== "#" && (
+                  <a href={item.liveUrl} target="_blank" rel="noreferrer" className="text-xs font-mono text-[#00C853] hover:underline">[ Visitar ➔ ]</a>
+                )}
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
-};
+}

@@ -8,7 +8,8 @@ import AboutSection from "@/components/core/AboutSection";
 import EducationSection from "@/components/core/EducationSection";
 import ProjectCard from "@/components/ui/ProjectCard";
 import ExperimentCard from "@/components/ui/ExperimentCard";
-import { ProjectModal } from "@/components/ui/DetailModal";
+import DetailModal from "@/components/ui/DetailModal";
+import CoreConnectModal from "@/components/ui/CoreConnectModal"; // Importe o novo
 import MagneticButton from "@/components/interactive/MagneticButton";
 import { projects, experiments, Project } from "@/content/projects";
 
@@ -25,8 +26,7 @@ export default function Home() {
         <Hero />
         <AboutSection />
         <EducationSection />
-        
-        {/* Seção Principal de Projetos */}
+
         <section id="projects" className="py-20 border-t border-[#1F222F]/60">
           <div className="space-y-2 mb-12">
             <span className="text-[#00C853] font-mono text-xs tracking-widest uppercase">// CASOS DE ESTUDO & APPS</span>
@@ -34,16 +34,15 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {projects.map((project) => (
-              <ProjectCard 
-                key={project.id} 
-                project={project} 
+              <ProjectCard
+                key={project.id}
+                project={project}
                 onClick={() => setSelectedItem(project)}
               />
             ))}
           </div>
         </section>
 
-        {/* Nova Seção: Laboratório & Criações Menores */}
         <section id="lab" className="py-20 border-t border-[#1F222F]/60">
           <div className="space-y-2 mb-12">
             <span className="text-[#00C853] font-mono text-xs tracking-widest uppercase">// EXPERIMENTOS & SUB-PROJETOS</span>
@@ -51,14 +50,21 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {experiments.map((exp) => (
-              <ExperimentCard 
-                key={exp.id} 
-                item={exp} 
+              <ExperimentCard
+                key={exp.id}
+                item={exp}
                 onClick={() => setSelectedItem(exp as unknown as Project)}
               />
             ))}
           </div>
         </section>
+
+        {/* Renderizador Condicional do Modal */}
+        {selectedItem && selectedItem.id === "core-connect-web" ? (
+          <CoreConnectModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+        ) : selectedItem ? (
+          <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+        ) : null}
 
         {/* Seção de Contato */}
         <section id="contact" className="py-32 border-t border-[#1F222F]/60 flex flex-col items-center text-center space-y-8">
@@ -91,8 +97,12 @@ export default function Home() {
         </section>
       </main>
 
-      {/* Renderizador do Modal Global com Typecast ajustado para aceitar Project ou Experiment */}
-      <ProjectModal project={selectedItem as any} isOpen={selectedItem !== null} onClose={() => setSelectedItem(null)} />
+      {/* Renderizador do Modal Global */}
+      {selectedItem && selectedItem.id === "core-connect-web" ? (
+        <CoreConnectModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      ) : selectedItem ? (
+        <DetailModal item={selectedItem} onClose={() => setSelectedItem(null)} />
+      ) : null}
 
       <footer className="relative z-10 py-12 text-center border-t border-[#1F222F]/30 bg-[#0B0C10]">
         <p className="text-xs font-mono text-[#8E929F]">

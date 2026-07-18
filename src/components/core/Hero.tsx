@@ -48,7 +48,7 @@ export default function Hero() {
           className="flex flex-wrap gap-4 pt-4"
         >
           <a
-            href="/curriculo.pdf" // Lembre-se de colocar o arquivo em /public/curriculo.pdf
+            href="/Nicolas_FonsecaMeira_Currículo.pdf" 
             download="Curriculo_Nicolas_Fonseca.pdf"
             className="group relative inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white text-[#0B0C10] font-semibold text-sm transition-all duration-300 hover:bg-[#00C853] hover:shadow-[0_0_25px_rgba(0,200,83,0.3)]"
           >
