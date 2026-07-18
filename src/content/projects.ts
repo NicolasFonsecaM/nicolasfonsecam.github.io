@@ -77,7 +77,7 @@ export const experiments: Project[] = [
     techStack: ["React", "TypeScript / Vite", "Supabase", "Tailwind CSS", "Framer Motion", "EmailJS API"],
     imageUrl: [
       "/images/core-connect/tela1.png", 
-      "/images/core-connect/tela2.pgn", 
+      "/images/core-connect/tela2.png", 
       "/images/core-connect/tela3.gif", 
     ]
   },
