@@ -69,13 +69,16 @@ export const experiments: Project[] = [
     techStack: ["Lottie (JSON)", "Adobe After Effects", "Vector Design"],
   },
   {
-    id: "girlfriend-project",
-    title: "Website Especial",
-    category: "Web Frontend",
-    description: "Um projeto web interativo, responsivo e altamente personalizado desenvolvido sob medida para minha namorada.",
-    longDescription: "Interface web autoral focada em micro-interações estéticas, transições físicas suaves em CSS e uma curadoria visual dedicada. Um ambiente interativo criado para explorar design responsivo refinado.",
-    techStack: ["React", "CSS Transitions", "HTML5"],
-    githubUrl: "#",
-    liveUrl: "#"
-  }
+    id: "core-connect-web",
+    title: "CoreConnect",
+    category: "Full-Stack Web Application",
+    description: "Plataforma web interativa e privada desenvolvida com React, TypeScript e Vite, integrada ao Supabase para gerenciamento dinâmico de memórias, dados e consumo de APIs externas.",
+    longDescription: "Desenvolvido como um estudo de caso focado no conceito de UX Emocional (interfaces personalizadas para nichos estritos de usuários) utilizando React, TypeScript e Vite. A aplicação consolida uma arquitetura Full-Stack real através da integração com o Supabase para operações de CRUD (persistência, leitura e exclusão de dados) em módulos de murais dinâmicos e centrais de registro automatizadas. O projeto explora intensamente o ecossistema multimídia e gerenciamento de estados complexos ao integrar o EmailJS para notificações assíncronas, consumo de streams externos (Spotify e players customizados do YouTube) e animações fluidas via Framer Motion. O maior destaque técnico está no módulo 'Memory Universe', um laboratório interativo de mapas de coordenadas clicáveis, modais dinâmicos e renderização condicional avançada baseada em estados do usuário.",
+    techStack: ["React", "TypeScript / Vite", "Supabase", "Tailwind CSS", "Framer Motion", "EmailJS API"],
+    imageUrl: [
+      "/images/core-connect/tela1.png", 
+      "/images/core-connect/tela2.pgn", 
+      "/images/core-connect/tela3.gif", 
+    ]
+  },
 ];
